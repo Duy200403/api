@@ -23,5 +23,8 @@ namespace api.Models
 
         // Navigation property: Một DevelopmentTeam thuộc về một Software
         public virtual Software Software { get; set; }
+        // Quan hệ 1-n với thành viên
+        public ICollection<DevelopmentTeamMember> Members { get; set; } = new List<DevelopmentTeamMember>();
+
     }
 }

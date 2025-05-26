@@ -26,8 +26,8 @@ namespace api.Mapper
             CreateMap<EmployeeUpdateDto, Employee>();
             // Shift -> ShiftDto
             CreateMap<Shift, ShiftDto>();
-                // .ForMember(dest => dest.Employee, opt => opt.MapFrom(src => src.Employee))
-                // .ReverseMap();
+            // .ForMember(dest => dest.Employee, opt => opt.MapFrom(src => src.Employee))
+            // .ReverseMap();
             CreateMap<Shift, CreateShiftDto>(); // Shift -> CreateShiftDto>
             CreateMap<CreateShiftDto, Shift>()
                 .ForMember(dest => dest.EmployeeId, opt => opt.Ignore()); // Bỏ qua vì xử lý thủ công trong controller
@@ -41,6 +41,12 @@ namespace api.Mapper
             CreateMap<Shift, EmployeeShiftsReportDto>();
             CreateMap<Shift, EmployeeShiftTotalReportDto>();
             CreateMap<Shift, WorkEfficiencyReportDto>();
+
+            // DevelopmentTeamMember
+            CreateMap<DevelopmentTeamMember, DevelopmentTeamMemberDto>();
+            CreateMap<CreateDevelopmentTeamMemberDto, DevelopmentTeamMember>();
+            CreateMap<DevelopmentTeamMemberDto, DevelopmentTeamMember>();
+            CreateMap<UpdateDevelopmentTeamMemberDto, DevelopmentTeamMember>();
         }
     }
 }

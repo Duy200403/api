@@ -49,7 +49,6 @@ namespace api.Controller
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var employee = _mapper.Map<Employee>(employeeDto);
-            employee.CreatedDate = DateTime.UtcNow;
             await _repository.AddAsync(employee);
             var createdDto = _mapper.Map<CreateEmployeeDto>(employee);
             return CreatedAtAction(nameof(GetById), new { id = employee.Id }, createdDto);

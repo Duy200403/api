@@ -9,7 +9,6 @@ namespace api.Dto
 {
     public class ShiftDto
     {
-        [JsonIgnore]
         public Guid Id { get; set; }
         [Required]
         public Guid EmployeeId { get; set; }

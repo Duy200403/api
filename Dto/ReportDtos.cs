@@ -32,4 +32,21 @@ namespace api.Dto
         public int TotalShifts { get; set; }
         public double TotalHours { get; set; }
     }
+
+    public class SoftwareReportDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Status { get; set; }
+    }
+    public class SoftwareByEmployeeReportDto
+    {
+        public Guid SoftwareId { get; set; }
+        public string SoftwareName { get; set; }
+        public DateTime StartDate { get; set; }
+        public string Role { get; set; }
+        public string Position { get; set; }
+    }
 }

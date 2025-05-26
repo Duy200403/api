@@ -108,34 +108,54 @@ namespace api.Controller
             }
         }
 
-        [HttpGet("report/shift-count")]
-        public async Task<IActionResult> GetShiftCount([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+        [HttpGet("software")]
+        public async Task<IActionResult> GetSoftwareReport([FromQuery] DateTime fromDate, [FromQuery] DateTime toDate, [FromQuery] string status)
         {
-            var shifts = await _repository.GetAllAsync();
-            var shiftCount = shifts
-                .Where(s => s.ShiftDate >= startDate && s.ShiftDate <= endDate)
-                .GroupBy(s => s.ShiftDate)
-                .Select(g => new ShiftCountReportDto { Date = g.Key, Count = g.Count() })
-                .ToList();
-            return Ok(shiftCount);
-        }
-
-        [HttpGet("report/employee-shifts")]
-        public async Task<IActionResult> GetEmployeeShifts([FromQuery] Guid employeeId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-        {
-            var shifts = await _repository.GetAllAsync();
-            var result = shifts
-                .Where(s => s.EmployeeId == employeeId && s.ShiftDate >= startDate && s.ShiftDate <= endDate)
-                .Select(s => new EmployeeShiftsReportDto
+            var result = await _context.Softwares
+                .Where(s => s.StartDate >= fromDate && s.StartDate <= toDate && s.Status == status)
+                .Select(s => new SoftwareReportDto
                 {
                     Id = s.Id,
-                    ShiftDate = s.ShiftDate,
-                    StartTime = s.StartTime,
-                    EndTime = s.EndTime
+                    Name = s.Name,
+                    StartDate = s.StartDate,
+                    EndDate = s.EndDate,
+                    Status = s.Status
                 })
-                .ToList();
+                .ToListAsync();
+
             return Ok(result);
         }
+
+        // Báo cáo nhân viên theo phần mềm và vai trò
+        [HttpGet("software-by-employee")]
+        public async Task<IActionResult> GetSoftwareByEmployeeReport()
+        {
+            // Lấy danh sách tất cả nhân viên đang Active
+            var report = await (
+                from member in _context.DevelopmentTeamMembers
+                join team in _context.DevelopmentTeams on member.DevelopmentTeamId equals team.Id
+                join software in _context.Softwares on team.SoftwareId equals software.Id
+                where member.Status == "Đang làm việc"
+                select new
+                {
+                    EmployeeId = member.Id,
+                    EmployeeName = member.Name,
+                    SoftwareId = software.Id,
+                    SoftwareName = software.Name,
+                    Role = member.Role,
+                    Position = member.Position,
+                    department = member.Department,
+                    SoftwareStartDate = software.StartDate,
+                    SoftwareStatus = software.Status
+                }
+            )
+            .OrderBy(x => x.EmployeeName)
+            .ThenBy(x => x.SoftwareName)
+            .ToListAsync();
+
+            return Ok(report);
+        }
+
 
         [HttpGet("report/employee-shift-total")]
         public async Task<IActionResult> GetEmployeeShiftTotal([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
